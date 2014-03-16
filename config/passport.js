@@ -11,7 +11,21 @@ var mongoose = require('mongoose'),
     config = require('./config');
 
 module.exports = function(passport) {
+    var validateForErrors = function(user, done, err, provider){
+        if (err){
+            var message = '';
 
+            if (err.errors && err.errors.email.message) {
+                message = provider + 's public email is blank. ' + err.errors.email.message;
+                return done(null, false, { message: message });
+            }
+            else if (err.code && err.code == 11000){
+                message = provider + 's username cannot be used. Username already exists.';
+                return done(null, false, { message: message });
+            }
+        }
+        return done(err, user);
+    };
     // Serialize the user id to push into the session
     passport.serializeUser(function(user, done) {
         done(null, user.id);
@@ -75,8 +89,8 @@ module.exports = function(passport) {
                         twitter: profile._json
                     });
                     user.save(function(err) {
-                        if (err) console.log(err);
-                        return done(err, user);
+                        return validateForErrors(user, done, err, 'twitter');
+
                     });
                 } else {
                     return done(err, user);
@@ -107,8 +121,7 @@ module.exports = function(passport) {
                         facebook: profile._json
                     });
                     user.save(function(err) {
-                        if (err) console.log(err);
-                        return done(err, user);
+                        return validateForErrors(user, done, err, 'facebook');
                     });
                 } else {
                     return done(err, user);
@@ -136,8 +149,7 @@ module.exports = function(passport) {
                         github: profile._json
                     });
                     user.save(function(err) {
-                        if (err) console.log(err);
-                        return done(err, user);
+                        return validateForErrors(user, done, err, 'github');
                     });
                 } else {
                     return done(err, user);
@@ -165,8 +177,7 @@ module.exports = function(passport) {
                         google: profile._json
                     });
                     user.save(function(err) {
-                        if (err) console.log(err);
-                        return done(err, user);
+                        return validateForErrors(user, done, err, 'google');
                     });
                 } else {
                     return done(err, user);
@@ -194,8 +205,7 @@ module.exports = function(passport) {
                         provider: 'linkedin'
                     });
                     user.save(function(err) {
-                        if (err) console.log(err);
-                        return done(err, user);
+                        return validateForErrors(user, done, err, 'linkedin');
                     });
                 } else {
                     return done(err, user);
