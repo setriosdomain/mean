@@ -14,7 +14,6 @@ module.exports = function(passport) {
     var validateForErrors = function(user, done, err, provider){
         if (err){
             var message = '';
-
             if (err.errors && err.errors.email.message) {
                 message = provider + 's public email is blank. ' + err.errors.email.message;
                 return done(null, false, { message: message });
