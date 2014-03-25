@@ -80,10 +80,6 @@ Bower Clean Cache:
 ```
 $ bower cache clean
 ```
-If having problems with karma, delete all directories that start with karma inside node_modules and then run:
-```
-$ npm install karma --save-dev
-```
 
  
 ## Configuration
